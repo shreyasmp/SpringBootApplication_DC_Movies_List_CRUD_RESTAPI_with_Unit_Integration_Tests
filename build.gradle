@@ -1,5 +1,3 @@
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
-
 group 'com.shreyas.movies'
 version '1.0-SNAPSHOT'
 
