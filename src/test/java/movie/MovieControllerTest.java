@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MockitoMovieControllerTest {
+public class MovieControllerTest {
 
     @InjectMocks
     private MovieController movieController;
