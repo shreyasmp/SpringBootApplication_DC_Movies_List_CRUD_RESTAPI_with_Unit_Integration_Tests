@@ -18,12 +18,12 @@ public class MovieController {
     private MovieRepository movieRepository;
 
     @RequestMapping(method = RequestMethod.GET)
-    Collection<Movie> getAllMovies() {
+    public Collection<Movie> getAllMovies() {
         return Lists.newArrayList(movieRepository.findAll());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "movieName/{movieName}")
-    Collection<Movie> getMovieByMovieName(@PathVariable String movieName) {
+    public Collection<Movie> getMovieByMovieName(@PathVariable String movieName) {
         return movieRepository.findMovieByMovieName(movieName);
     }
 

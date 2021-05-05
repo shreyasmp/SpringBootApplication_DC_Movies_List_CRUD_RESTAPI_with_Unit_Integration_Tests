@@ -10,7 +10,7 @@ public class Movie extends BaseEntity {
     private String movieName;
     private int movieRanking;
 
-    protected Movie() {
+    public Movie() {
         super();
     }
 
