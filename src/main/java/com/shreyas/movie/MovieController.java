@@ -33,7 +33,7 @@ public class MovieController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    ResponseEntity<?> addMovie(@RequestBody Movie movie) {
+    public ResponseEntity<?> addMovie(@RequestBody Movie movie) {
         if (Util.save(movieRepository, new Movie(movie.getMovieName(), movie.getMovieRanking())) != null) {
             return Util.createResponseEntity("Successful creation of resource", HttpStatus.CREATED);
         }

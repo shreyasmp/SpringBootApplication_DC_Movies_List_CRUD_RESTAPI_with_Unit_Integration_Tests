@@ -39,7 +39,6 @@ public class MovieTest {
 
     @Test
     public void testFetchMovieByName() {
-
         String mov1 = "Dark Knight";
         String mov2 = "Redhood";
         String mov3 = "Justice League";
@@ -51,7 +50,6 @@ public class MovieTest {
 
     @Test
     public void testFetchMovieByRanking() {
-
         assertThat(movie1.getMovieRanking()).isEqualTo(1);
         assertThat(movie2.getMovieRanking()).isEqualTo(2);
         assertThat(movie3.getMovieRanking()).isEqualTo(3);
