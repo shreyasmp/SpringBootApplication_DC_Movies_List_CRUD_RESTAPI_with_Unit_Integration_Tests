@@ -30,6 +30,7 @@ dependencies {
 
     testImplementation group: 'junit', name: 'junit', version: '4.13'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.3.4.RELEASE'
+    testImplementation 'org.springframework.security:spring-security-test:4.2.3.RELEASE'
     testImplementation "org.mockito:mockito-core:3.8.0"
     testImplementation "org.mockito:mockito-inline:3.8.0"
     testImplementation('org.mockito:mockito-junit-jupiter:2.18.3')

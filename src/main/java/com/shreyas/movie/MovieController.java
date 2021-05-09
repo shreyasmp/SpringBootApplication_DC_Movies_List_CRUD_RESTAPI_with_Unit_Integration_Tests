@@ -41,7 +41,7 @@ public class MovieController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "movieRanking/{movieRanking}")
-    ResponseEntity<?> updateMovie(@RequestBody Movie movie, @PathVariable long movieRanking) {
+    public ResponseEntity<?> updateMovie(@RequestBody Movie movie, @PathVariable long movieRanking) {
         Movie newMovie = Util.findMovieByRanking(movieRepository, movieRanking);
         if (newMovie != null) {
             newMovie.setMovieName(movie.getMovieName());
@@ -54,7 +54,7 @@ public class MovieController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "movieRanking/{movieRanking}")
-    ResponseEntity<?> deleteMovie(@PathVariable long movieRanking) {
+    public ResponseEntity<?> deleteMovie(@PathVariable long movieRanking) {
         try {
             movieRepository.delete(movieRanking);
             return Util.createResponseEntity("Data deleted successfully", HttpStatus.ACCEPTED);
