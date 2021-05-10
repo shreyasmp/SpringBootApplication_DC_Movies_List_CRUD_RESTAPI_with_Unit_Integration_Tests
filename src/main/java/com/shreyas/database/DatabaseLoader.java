@@ -49,7 +49,9 @@ public class DatabaseLoader implements ApplicationRunner {
                 "Batman vs Superman",
                 "Batman: Under the Redhood",
                 "The Dark Knight Returns Part 1",
-                "The Dark Knight Returns Part 2"
+                "The Dark Knight Returns Part 2",
+                "Wonder Woman: 1984",
+                "AquaMan: Rise of Atlantis"
         };
 
         IntStream.range(0, 10).forEach(it -> {

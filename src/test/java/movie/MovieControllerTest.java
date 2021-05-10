@@ -1,5 +1,6 @@
 package movie;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shreyas.movie.Movie;
 import com.shreyas.movie.MovieController;
 import com.shreyas.repository.MovieRepository;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @WebMvcTest(controllers = MovieController.class)
 @WebAppConfiguration
@@ -67,6 +70,9 @@ public class MovieControllerTest {
         Mockito.verify(movieRepository).findMovieByMovieName("Batman/Superman: Public Enemies");
 
         assertThat(movieCollection.contains(movie3)).isTrue();
+
+        verify(movieRepository).findMovieByMovieName(any());
+        verifyNoMoreInteractions(movieRepository);
     }
 
     @Test
@@ -81,6 +87,9 @@ public class MovieControllerTest {
         Mockito.verify(movieRepository).findAll();
 
         assertThat(movieCollection.size()).isEqualTo(2);
+
+        verify(movieRepository).findAll();
+        verifyNoMoreInteractions(movieRepository);
     }
 
     @Test
@@ -104,6 +113,9 @@ public class MovieControllerTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+
+        verify(movieRepository, times(2)).findAll();
+        verifyNoMoreInteractions(movieRepository);
     }
 
     @Test
@@ -132,24 +144,23 @@ public class MovieControllerTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+
+        verify(movieRepository, times(2)).save(Mockito.any(Movie.class));
+        verifyNoMoreInteractions(movieRepository);
     }
 
     @Test
-    public void testUpdateAMovieByRanking_HTTP_SUCCESS() throws Exception {
-        Movie movie = new Movie("Dawn Of Justice", 6);
+    public void testUpdateAMovie_HTTP_SUCCESS() throws Exception {
+        Movie movie = new Movie("Dawn Of Justice", 1);
+        movies.add(movie);
 
-        Mockito.when(movieRepository.save(Mockito.any(Movie.class))).thenReturn(movie);
+        when(movieController.getMovieByMovieName(movie.getMovieName())).thenReturn(movies);
+        when(movieController.updateMovie(movie, 5)).thenReturn(any());
 
-        movieController.updateMovie(movie, 1);
-
-        String updateMovieJson = "{\n" +
-                "    \"movieName\": \"Batman: Under the Redhood\",\n" +
-                "    \"movieRanking\": 5\n" +
-                "}";
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .put("/movies/movieRanking/6")
+                .put("/movies/movieRanking/{movieRanking}", movie.getMovieRanking())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updateMovieJson))
+                .content(asJsonString(movie)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Data updated successfully"))
                 .andDo(MockMvcResultHandlers.print())
@@ -159,8 +170,10 @@ public class MovieControllerTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+
+        verifyNoMoreInteractions(movieRepository);
     }
-    
+
     @Test
     public void testDeleteAMovie_HTTP_SUCCESS() throws Exception {
         Mockito.doNothing().when(movieRepository).delete(movie1);
@@ -179,6 +192,14 @@ public class MovieControllerTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.ACCEPTED.value());
+    }
+
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @After

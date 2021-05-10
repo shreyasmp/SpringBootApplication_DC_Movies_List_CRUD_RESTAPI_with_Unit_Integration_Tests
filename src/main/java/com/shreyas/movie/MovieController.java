@@ -28,7 +28,7 @@ public class MovieController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "movieRanking/{movieRanking}")
-    Movie getMovieByRank(@PathVariable Long movieRanking) {
+    public Movie getMovieByRank(@PathVariable Long movieRanking) {
         return Util.findMovieByRanking(movieRepository, movieRanking);
     }
 
