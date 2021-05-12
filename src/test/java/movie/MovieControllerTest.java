@@ -1,6 +1,5 @@
 package movie;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shreyas.movie.Movie;
 import com.shreyas.movie.MovieController;
 import com.shreyas.repository.MovieRepository;
@@ -18,7 +17,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -29,6 +27,8 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = MovieController.class)
 @WebAppConfiguration
@@ -101,11 +101,11 @@ public class MovieControllerTest {
 
         movieController.getAllMovies();
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .get("/movies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+        MvcResult result = mockMvc.perform(
+                get("/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
@@ -130,12 +130,11 @@ public class MovieControllerTest {
                 "    \"movieName\": \"Batman: Under the Redhood\",\n" +
                 "    \"movieRanking\": 2\n" +
                 "}";
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .post("/movies")
+        MvcResult result = mockMvc.perform(post("/movies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(createNewMovieJson)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string("Successful creation of resource"))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -154,14 +153,20 @@ public class MovieControllerTest {
         Movie movie = new Movie("Dawn Of Justice", 1);
         movies.add(movie);
 
-        when(movieController.getMovieByMovieName(movie.getMovieName())).thenReturn(movies);
-        when(movieController.updateMovie(movie, 5)).thenReturn(any());
+        when(movieRepository.findMovieByMovieName(movie.getMovieName())).thenReturn(movies);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .put("/movies/movieRanking/{movieRanking}", movie.getMovieRanking())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(movie)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+        movieController.updateMovie(movie, 5);
+
+        String updateMovieJson = "{\n" +
+                "    \"movieName\": \"Dawn Of Justice\",\n" +
+                "    \"movieRanking\": 5\n" +
+                "}";
+
+        MvcResult result = mockMvc.perform(
+                put("/movies/movieRanking/{movieRanking}", movie.getMovieRanking())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateMovieJson))
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Data updated successfully"))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -176,14 +181,13 @@ public class MovieControllerTest {
 
     @Test
     public void testDeleteAMovie_HTTP_SUCCESS() throws Exception {
-        Mockito.doNothing().when(movieRepository).delete(movie1);
+        doNothing().when(movieRepository).delete(movie1);
 
         movieController.deleteMovie(movie1.getMovieRanking());
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .delete("/movies/movieRanking/1")
+        MvcResult result = mockMvc.perform(delete("/movies/movieRanking/1")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(status().isAccepted())
                 .andExpect(MockMvcResultMatchers.content().string("Data deleted successfully"))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -192,14 +196,6 @@ public class MovieControllerTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.ACCEPTED.value());
-    }
-
-    private static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @After
