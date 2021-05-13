@@ -14,7 +14,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -77,28 +76,11 @@ public class MovieControllerTest {
     }
 
     @Test
-    public void testGetAllMovies() {
-        movies.add(movie1);
-        movies.add(movie2);
-
-        Mockito.when(movieRepository.findAll()).thenReturn(movies);
-
-        ResponseEntity<Collection<Movie>> movieCollection = movieController.getAllMovies();
-
-        Mockito.verify(movieRepository).findAll();
-
-        assertThat(movieCollection.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        verify(movieRepository).findAll(anyIterable());
-        verifyNoMoreInteractions(movieRepository);
-    }
-
-    @Test
     public void testGetAllMovies_HTTP_SUCCESS() throws Exception {
         movies.add(movie1);
         movies.add(movie2);
 
-        Mockito.when(movieRepository.findAll()).thenReturn(movies);
+        when(Util.getAllMovies(anyList())).thenReturn(movies);
 
         movieController.getAllMovies();
 
@@ -114,9 +96,6 @@ public class MovieControllerTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-
-        verify(movieRepository, times(2)).findAll();
-        verifyNoMoreInteractions(movieRepository);
     }
 
     @Test
