@@ -12,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -22,11 +21,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebAppConfiguration
@@ -48,20 +44,22 @@ public class DetailsServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "bwayne", password = "123456", roles = "USER")
+    @WithMockUser(username = "shreyas", password = "123456", roles = "USER")
     public void testFindUserName() throws Exception {
 
-        MovieDBUser user = new MovieDBUser("bruce", "wayne", "bwayne", "123456", new String[]{"ROLE_USER"});
+        MovieDBUser user = new MovieDBUser("shreyas", "muthkur", "ggshmp", "123456", new String[]{"ROLE_USER"});
 
         when(repository.findByUserName(user.getUserName())).thenReturn(user);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/movies")
+        service.loadUserByUsername(user.getUserName());
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/movies")
                 .with(user(user.getUserName()))
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("bwayne")))
+                .accept(MediaType.ALL))
+                .andExpect(status().isNotFound())
                 .andReturn();
 
-        assertThat(result).isEqualTo(HttpStatus.OK.value());
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 }

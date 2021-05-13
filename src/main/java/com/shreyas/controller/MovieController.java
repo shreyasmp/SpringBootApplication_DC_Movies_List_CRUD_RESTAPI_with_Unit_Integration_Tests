@@ -1,6 +1,7 @@
-package com.shreyas.movie;
+package com.shreyas.controller;
 
 import com.google.common.collect.Lists;
+import com.shreyas.movie.Movie;
 import com.shreyas.repository.MovieRepository;
 import com.shreyas.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;

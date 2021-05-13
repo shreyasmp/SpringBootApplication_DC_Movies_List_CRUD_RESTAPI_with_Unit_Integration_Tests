@@ -1,7 +1,7 @@
-package movie;
+package controller;
 
 import com.shreyas.movie.Movie;
-import com.shreyas.movie.MovieController;
+import com.shreyas.controller.MovieController;
 import com.shreyas.repository.MovieRepository;
 import com.shreyas.util.Util;
 import org.junit.After;
