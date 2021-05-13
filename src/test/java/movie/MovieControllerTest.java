@@ -3,6 +3,7 @@ package movie;
 import com.shreyas.movie.Movie;
 import com.shreyas.movie.MovieController;
 import com.shreyas.repository.MovieRepository;
+import com.shreyas.util.Util;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,7 +50,6 @@ public class MovieControllerTest {
 
     private ArrayList<Movie> movies = new ArrayList<>();
 
-
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -82,13 +83,13 @@ public class MovieControllerTest {
 
         Mockito.when(movieRepository.findAll()).thenReturn(movies);
 
-        Collection<Movie> movieCollection = movieController.getAllMovies();
+        ResponseEntity<Collection<Movie>> movieCollection = movieController.getAllMovies();
 
         Mockito.verify(movieRepository).findAll();
 
-        assertThat(movieCollection.size()).isEqualTo(2);
+        assertThat(movieCollection.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        verify(movieRepository).findAll();
+        verify(movieRepository).findAll(anyIterable());
         verifyNoMoreInteractions(movieRepository);
     }
 
@@ -121,8 +122,9 @@ public class MovieControllerTest {
     @Test
     public void testCreateAMovie_HTTP_SUCCESS() throws Exception {
         Movie movie = new Movie("Dawn Of Justice", 6);
+        movies.add(movie);
 
-        Mockito.when(movieRepository.save(Mockito.any(Movie.class))).thenReturn(movie);
+        Mockito.when(movieRepository.save(Mockito.anyIterable())).thenReturn(movies);
 
         movieController.addMovie(movie);
 
@@ -144,16 +146,19 @@ public class MovieControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 
-        verify(movieRepository, times(2)).save(Mockito.any(Movie.class));
+        verify(movieRepository, times(2)).save(Mockito.anyIterable());
         verifyNoMoreInteractions(movieRepository);
     }
 
     @Test
     public void testUpdateAMovie_HTTP_SUCCESS() throws Exception {
+        // Mock Static class this way
+        mockStatic(Util.class);
         Movie movie = new Movie("Dawn Of Justice", 1);
         movies.add(movie);
 
-        when(movieRepository.findMovieByMovieName(movie.getMovieName())).thenReturn(movies);
+        when(Util.findMovieByRanking(anyLong())).thenReturn(movie);
+        Mockito.when(movieRepository.save(Mockito.anyIterable())).thenReturn(movies);
 
         movieController.updateMovie(movie, 5);
 
@@ -167,7 +172,6 @@ public class MovieControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateMovieJson))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Data updated successfully"))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 

@@ -56,7 +56,7 @@ public class DatabaseLoader implements ApplicationRunner {
 
         IntStream.range(0, 10).forEach(it -> {
             String name = movieNames[it % movieNames.length];
-            Movie movie = new Movie(name, (it % movieNames.length));
+            Movie movie = new Movie(name, (it % movieNames.length) + 1);
             movies.add(movie);
         });
         moviesRepository.save(movies);
