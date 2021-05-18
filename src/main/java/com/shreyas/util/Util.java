@@ -32,12 +32,12 @@ public class Util {
 
     public static Iterable<Movie> createMovie(CrudRepository<Movie, Long> repo, Movie movie) {
         movies.add(movie);
-        return repo.save(movies);
+        return repo.saveAll(movies);
     }
 
     public static Iterable<Movie> updateMovie(CrudRepository<Movie, Long> repo, Movie movie) {
         int movieRanking = movies.indexOf(movie);
         movies.set(movieRanking, movie);
-        return repo.save(movies);
+        return repo.saveAll(movies);
     }
 }

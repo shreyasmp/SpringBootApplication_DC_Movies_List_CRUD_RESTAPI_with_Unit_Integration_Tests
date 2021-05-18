@@ -35,7 +35,7 @@ public class MovieDBUserTest {
                 user2 = new MovieDBUser("Alfred", "Pennyworth", "alfredo", "waynemanor", new String[]{"ROLE_USER"}),
                 user3 = new MovieDBUser("Celina", "Kyle", "catwoman", "silkycat", new String[]{"ROLE_USER"})
         );
-        repository.save(users);
+        repository.saveAll(users);
     }
 
     @Test

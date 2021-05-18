@@ -4,10 +4,9 @@ import com.shreyas.Application;
 import com.shreyas.movie.Movie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.context.embedded.LocalServerPort;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -18,15 +17,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc(secure = false)
 public class MovieControllerWebIntegrationTest {
 
     @LocalServerPort
     private int port;
 
-    private TestRestTemplate restTemplate = new TestRestTemplate();
+    private final TestRestTemplate restTemplate = new TestRestTemplate();
 
-    private HttpHeaders headers = new HttpHeaders();
+    private final HttpHeaders headers = new HttpHeaders();
 
     @Test
     public void test_GET_AllMovies_401_UNAUTHROIZED() {

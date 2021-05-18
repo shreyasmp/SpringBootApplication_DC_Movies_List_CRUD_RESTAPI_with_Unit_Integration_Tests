@@ -17,8 +17,8 @@ import java.util.stream.IntStream;
 @Component
 public class DatabaseLoader implements ApplicationRunner {
 
-    private MovieRepository moviesRepository;
-    private UserRepository userRepository;
+    private final MovieRepository moviesRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public DatabaseLoader(MovieRepository moviesRepository, UserRepository userRepository) {
@@ -35,7 +35,7 @@ public class DatabaseLoader implements ApplicationRunner {
                 new MovieDBUser("dick", "grayson", "dickg", "password", new String[]{"ROLE_USER"}),
                 new MovieDBUser("celina", "kyle", "catsy", "password", new String[]{"ROLE_USER"})
         );
-        userRepository.save(users);
+        userRepository.saveAll(users);
 
         userRepository.save(new MovieDBUser("bruce", "wayne", "bwayne", "123456", new String[]{"ROLE_USER", "ROLE_ADMIN"}));
 
@@ -59,6 +59,6 @@ public class DatabaseLoader implements ApplicationRunner {
             Movie movie = new Movie(name, (it % movieNames.length) + 1);
             movies.add(movie);
         });
-        moviesRepository.save(movies);
+        moviesRepository.saveAll(movies);
     }
 }

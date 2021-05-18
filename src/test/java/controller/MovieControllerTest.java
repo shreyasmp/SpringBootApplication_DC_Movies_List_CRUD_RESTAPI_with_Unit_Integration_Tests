@@ -1,7 +1,7 @@
 package controller;
 
-import com.shreyas.movie.Movie;
 import com.shreyas.controller.MovieController;
+import com.shreyas.movie.Movie;
 import com.shreyas.repository.MovieRepository;
 import com.shreyas.util.Util;
 import org.junit.After;
@@ -103,7 +103,7 @@ public class MovieControllerTest {
         Movie movie = new Movie("Dawn Of Justice", 6);
         movies.add(movie);
 
-        Mockito.when(movieRepository.save(Mockito.anyIterable())).thenReturn(movies);
+        Mockito.when(movieRepository.saveAll(Mockito.anyIterable())).thenReturn(movies);
 
         movieController.addMovie(movie);
 
@@ -125,7 +125,7 @@ public class MovieControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 
-        verify(movieRepository, times(2)).save(Mockito.anyIterable());
+        verify(movieRepository, times(2)).saveAll(Mockito.anyIterable());
         verifyNoMoreInteractions(movieRepository);
     }
 
@@ -137,7 +137,7 @@ public class MovieControllerTest {
         movies.add(movie);
 
         when(Util.findMovieByRanking(anyLong())).thenReturn(movie);
-        Mockito.when(movieRepository.save(Mockito.anyIterable())).thenReturn(movies);
+        Mockito.when(movieRepository.saveAll(Mockito.anyIterable())).thenReturn(movies);
 
         movieController.updateMovie(movie, 5);
 

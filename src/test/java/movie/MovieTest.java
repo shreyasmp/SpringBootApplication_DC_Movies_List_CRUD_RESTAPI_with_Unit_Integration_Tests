@@ -34,7 +34,7 @@ public class MovieTest {
         movie3 = new Movie("Justice League", 3);
 
         repository.deleteAll();
-        repository.save(Arrays.asList(movie1, movie2, movie3));
+        repository.saveAll(Arrays.asList(movie1, movie2, movie3));
     }
 
     @Test

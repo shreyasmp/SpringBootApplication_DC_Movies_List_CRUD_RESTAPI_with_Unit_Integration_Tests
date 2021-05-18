@@ -61,11 +61,11 @@ public class MovieController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "movieRanking/{movieRanking}")
     public ResponseEntity<?> deleteMovie(@PathVariable long movieRanking) {
-        try {
-            movieRepository.delete(movieRanking);
+        Movie toBeDeletedMovie = Util.findMovieByRanking(movieRanking);
+        if (toBeDeletedMovie != null) {
+            movieRepository.delete(toBeDeletedMovie);
             return Util.createResponseEntity("Data deleted successfully", HttpStatus.ACCEPTED);
-        } catch (Exception e) {
-            return Util.createResponseEntity("Resource not found", HttpStatus.NOT_FOUND);
         }
+        return Util.createResponseEntity("Resource not found", HttpStatus.NOT_FOUND);
     }
 }

@@ -7,14 +7,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-@SpringBootTest(classes = Application.class)
+@ContextConfiguration(classes = Application.class)
 public class UserRepositoryTest {
 
     @Autowired
@@ -26,7 +26,7 @@ public class UserRepositoryTest {
         repository.save(expected);
         MovieDBUser actual = repository.findByUserName("batman007");
         assertNotNull(expected);
-        assertTrue(actual.equals(expected));
+        assertEquals(actual, expected);
     }
 
     @Test
@@ -50,5 +50,4 @@ public class UserRepositoryTest {
         repository.save(user);
         repository.delete(user);
     }
-
 }
